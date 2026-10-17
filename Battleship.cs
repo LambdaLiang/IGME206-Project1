@@ -88,9 +88,17 @@ class Program
                         if (!setupPhase)
                         {
                             // Test message
-                            Console.WriteLine("Show shot map.");
+                            Console.WriteLine("Showing shot map.");
+
                             // Display shot map only in game phase
-                            // DisplayShotMapFunction();
+                            if (playerID == 1)
+                            {
+                                DisplayShotMap(player1Shots, rowDim, colDim, ref player1Ships, ref player2Ships);
+                            }
+                            else
+                            {
+                                DisplayShotMap(player2Shots, rowDim, colDim, ref player2Ships, ref player1Ships);
+                            }
                         }
                         else
                         {
@@ -184,6 +192,17 @@ class Program
 
                             Console.WriteLine($"Shooting at position {row}:{col}.");
 
+                            // Places an X at the position the player inputted for each player
+                            // Since it's only 1v1 game, this makes sense
+                            if (playerID == 1)
+                            {
+                                player1Shots[row, col] = 'X';
+                            }
+                            else
+                            {
+                                player2Shots[row, col] = 'X';
+                            }
+
                             // Convert user input into array index
                             inputIndexConversion(ref row);
                             inputIndexConversion(ref col);
@@ -231,7 +250,7 @@ class Program
     static void GameplayText(int playerID)
     {
         Console.WriteLine(new string('-', Console.WindowWidth));
-        Console.WriteLine($"Player {playerID}. it's your turn. Enter, in order, the row and column you would like to target,'b' to see your ship layout, 'm' to see your shot map, or 'x' to exit, then press <enter>.");
+        Console.WriteLine($"Player {playerID}. It's your turn. Enter, in order, the row and column you would like to target,'b' to see your ship layout, 'm' to see your shot map, or 'x' to exit, then press <enter>.");
         Console.WriteLine(new string('-', Console.WindowWidth));
     }
 
@@ -254,7 +273,18 @@ class Program
         // We need to unify this before passing user input into the array operations
         coord -= 1;
     }
-
+    /// <summary>
+    /// Allows both players to place their ships on the map
+    /// </summary>
+    /// <param name="shipBoard"></param>
+    /// <param name="row">Gets the row input from the player</param>
+    /// <param name="col">Gets the column input from the player</param>
+    /// <param name="direction">Which direction the ship is place in, either h or v</param>
+    /// <param name="shipSize">How big is the ship</param>
+    /// <param name="shipIcon">C for Carrier, B for Battleship, etc.</param>
+    /// <param name="rowDim">Gets all of the rows</param>
+    /// <param name="colDim">Gets all of the columns</param>
+    /// <returns></returns>
     public static bool PlaceShipFunction(ref char[,] shipBoard, int row, int col, string direction, int shipSize, char shipIcon, int rowDim, int colDim)
     {
         // check starting coordinates on board
@@ -337,6 +367,32 @@ class Program
             }
             Console.WriteLine();
         }
+    }
+
+    /// <summary>
+    /// Will check to see where the player shoots on the board
+    /// </summary>
+    /// <param name="shotFired">Gets the board of the map</param>
+    /// <param name="rowDim">Gets the rows of the board</param>
+    /// <param name="colDim">Gets the columns of the board</param>
+    /// <param name="player1Shots"></param>
+    /// <param name="player2Shots"></param>
+    public static void DisplayShotMap(char[,] shotsFired, int rowDim, int colDim, ref char[,] player1Shots, ref char[,] player2Shots)
+    {
+        //Goes through the map and displays X for every shot taken
+        //TODO: Need to figure out how to replace an X for the shots that the player took
+        for (int i = 0; i < rowDim; i++)
+        {
+            for (int j = 0; j < colDim; j++)
+            {
+                if (player1Shots[i, j] == shotsFired[i, j])
+                {
+                    Console.Write(player1Shots[i, j] = 'X');
+                }
+            }
+            Console.WriteLine();
+        }
+        PrintMap(shotsFired, rowDim, colDim);
     }
 }
 
