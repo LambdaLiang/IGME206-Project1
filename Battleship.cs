@@ -93,11 +93,13 @@ class Program
                             // Display shot map only in game phase
                             if (playerID == 1)
                             {
-                                DisplayShotMap(player1Shots, rowDim, colDim, ref player1Ships, ref player2Ships);
+                                PrintMap(player1Shots, rowDim, colDim);
+                                //DisplayShotMap(player1Shots, rowDim, colDim, ref player1Ships, ref player2Ships);
                             }
                             else
                             {
-                                DisplayShotMap(player2Shots, rowDim, colDim, ref player2Ships, ref player1Ships);
+                                PrintMap(player2Shots, rowDim, colDim);
+                               //DisplayShotMap(player2Shots, rowDim, colDim, ref player2Ships, ref player1Ships);
                             }
                         }
                         else
@@ -377,23 +379,23 @@ class Program
     /// <param name="colDim">Gets the columns of the board</param>
     /// <param name="player1Shots"></param>
     /// <param name="player2Shots"></param>
-    public static void DisplayShotMap(char[,] shotsFired, int rowDim, int colDim, ref char[,] player1Shots, ref char[,] player2Shots)
-    {
-        //Goes through the map and displays X for every shot taken
-        //TODO: Need to figure out how to replace an X for the shots that the player took
-        for (int i = 0; i < rowDim; i++)
-        {
-            for (int j = 0; j < colDim; j++)
-            {
-                if (player1Shots[i, j] == shotsFired[i, j])
-                {
-                    Console.Write(player1Shots[i, j] = 'X');
-                }
-            }
-            Console.WriteLine();
-        }
-        PrintMap(shotsFired, rowDim, colDim);
-    }
+    //public static void DisplayShotMap(char[,] shotsFired, int rowDim, int colDim, ref char[,] player1Shots, ref char[,] player2Shots)
+    //{
+    //    //Goes through the map and displays X for every shot taken
+    //    //TODO: Need to figure out how to replace an X for the shots that the player took
+    //    for (int i = 0; i < rowDim; i++)
+    //    {
+    //        for (int j = 0; j < colDim; j++)
+    //        {
+    //            if (player1Shots[i, j] == shotsFired[i, j])
+    //            {
+    //                Console.Write(player1Shots[i, j] = 'X');
+    //            }
+    //        }
+    //        Console.WriteLine();
+    //    }
+    //    PrintMap(shotsFired, rowDim, colDim);
+    //}
 }
 
 // When is the first time I can determine win?
