@@ -1,0 +1,78 @@
+﻿
+namespace Project1Entrance
+{
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Entrance();    
+        }
+
+
+        static void Entrance()
+        {
+            bool entranceScreen = true;
+            Console.WriteLine("====== Welcome to Battleship! ======");
+            Console.WriteLine("Get ready to command your fleet in this classic two-player strategy game of naval combat!");
+
+            Console.WriteLine();
+
+            Console.WriteLine("====== Overview ======");
+
+            Console.WriteLine("Each player commands a fleet of 5 ships placed on a 10 x 10 grid.");
+            Console.WriteLine("Your goal is to locate and sink all of your opponent's ships before they sink yours!");
+
+            Console.WriteLine();
+
+            Console.WriteLine("Press Enter to see how to play");
+
+            while (entranceScreen)
+            {
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true);
+
+                if (keyInfo.Key == ConsoleKey.Enter)
+                {
+                    Console.Clear();
+
+                    Console.WriteLine("====== How to Play ======");
+                    Console.WriteLine();
+
+                    Console.WriteLine("Setup Phase: ");
+                    Console.WriteLine();
+
+                    Console.WriteLine("You are given 5 ships:");
+                    Console.WriteLine("Aircraft Carrier (Length: 5)");
+                    Console.WriteLine("Battleship(Length: 4)");
+                    Console.WriteLine("Destroyer (Length: 3)");
+                    Console.WriteLine("Submarine (Length: 3)");
+                    Console.WriteLine("Patrol Boat (Length: 2)");
+
+                    Console.WriteLine();
+                    Console.WriteLine("Both players take turns placing their 5 ships horizontally (h) or vertically (v) on their 10 x 10 grid.");
+                    Console.WriteLine("Ships must fit entirely on the board and cannot overlap or be placed diagonally.");
+                    Console.WriteLine("Press any key to see the next set of instructions");
+                    Console.ReadKey(true);
+                    Console.WriteLine();
+
+                    Console.WriteLine("Game Phase: Players take turns firing shots by entering grid coordinates (row and column).");
+                    Console.ReadKey(true);
+                    Console.WriteLine();
+
+                    Console.WriteLine("Tracking Progress: On your turn, you can view your board to check your remaining ships or check your shot map to track your hits and misses.");
+                    Console.ReadKey(true);
+                    Console.WriteLine();
+
+                    Console.WriteLine("Winning: The first player to sink all 5 enemy ships wins the battle!");
+                    Console.ReadKey(true);
+                    Console.Clear();
+                }
+
+                entranceScreen = false;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Now you are ready to play!");
+        }
+    }
+}

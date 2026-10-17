@@ -1,0 +1,86 @@
+using System;
+
+namespace Program
+{
+    internal class Program
+    {
+        public static bool PlaceShipFunction(string shipName, int row, int col, string direction, int[,] mapCoordinate)
+        {
+            // get ship size
+            int shipSize = 0;
+            switch (shipName)
+            {
+                case "Carrier":
+                    shipSize = 5;
+                    break;
+                case "Battleship":
+                    shipSize = 4;
+                    break;
+                case "Destroyer":
+                    shipSize = 3;
+                    break;
+                case "Submarine":
+                    shipSize = 3;
+                    break;
+                case "Patrol":
+                    shipSize = 2;
+                    break;
+            }
+
+            // convert to 0-based index
+            int colIndex = col - 1;
+            int rowIndex = row - 1;
+
+            // check bounds
+            if (row < 1 || row > 10 || col < 1 || col > 10)
+                return false;
+
+            if (direction == "h")
+            {
+                if (colIndex + shipSize > 10)
+                    return false;
+            }
+            else
+            {
+                if (rowIndex + shipSize > 10)
+                    return false;
+            }
+
+            // check overlap
+            if (direction == "h")
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    if (mapCoordinate[colIndex + i, rowIndex] != 0)
+                        return false;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    if (mapCoordinate[colIndex, rowIndex + i] != 0)
+                        return false;
+                }
+            }
+
+            // place ship
+            if (direction == "h")
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    mapCoordinate[colIndex + i, rowIndex] = 1;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    mapCoordinate[colIndex, rowIndex + i] = 1;
+                }
+            }
+
+            return true;
+        }
+    }
+}

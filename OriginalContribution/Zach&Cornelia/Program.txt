@@ -1,0 +1,33 @@
+﻿namespace DisplayMapFunction
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            int xCoordinateMaximum = 10;
+            int yCoordinateMaximum = 10;
+            int[,] mapCoordinate = new int[xCoordinateMaximum, yCoordinateMaximum];
+
+            DisplayMap(xCoordinateMaximum, yCoordinateMaximum, mapCoordinate);
+            Console.ReadKey();
+        }
+
+        public static void DisplayMap(int xDimension, int yDimension, int[,] mapBoard)
+        {
+            int count = 0;
+            mapBoard = new int[11, 11];
+            
+            Console.WriteLine("   +---+---+---+---+---+---+---+---+---+---+");
+            for (int i = 1; i < mapBoard.GetLength(0); i++)
+            {
+                Console.Write($" {i} ");
+                for (int j = 1; j < mapBoard.GetLength(1); j++)
+                {
+                    Console.Write("|   ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("   +---+---+---+---+---+---+---+---+---+---+");
+        }
+    }
+}

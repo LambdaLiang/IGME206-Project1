@@ -1,0 +1,343 @@
+namespace Program
+{
+    internal class Program
+    {
+        //These shouldn't change according to the instructions so why not make them constants
+        const int xCoordinateMaximum = 10;
+        const int yCoordinateMaximum = 10;
+        static void Main(string[] args)
+        {
+            // variables to use
+            int playerID = 1;
+            bool setupPhase;
+            string[] shipArr = ["Carrier", "Battleship", "Destroyer", "Submarine", "Patrol"];
+            int currShipIdx = 0;
+            int[,] mapCoordinate = new int[xCoordinateMaximum, yCoordinateMaximum];
+            bool[] player1ShipPlacement = new bool[5];
+            bool[] player2ShipPlacement = new bool[5];
+
+            // Entrance Screen
+            // Entrance();
+            // Setup Phase
+            setupPhase = true;
+
+            SetupText(playerID);
+
+            // Main gameplay loop
+            while (true)
+            {
+                if (setupPhase)
+                {
+                    Console.WriteLine($"Player {playerID}, place your {shipArr[currShipIdx]}.");
+                }
+                else
+                {
+                    Console.WriteLine($"Player {playerID}, enter your shot coordinates.");
+                }
+                string playerInput = Console.ReadLine()!;
+                if (playerInput != null)
+                {
+                    playerInput = playerInput.Trim().ToLower();
+                }
+                switch (playerInput)
+                {
+                    case "x":
+                        {
+                            Console.WriteLine("Exit game.");
+                            return;
+                        }
+                    case "b":
+                        {
+                            // Test message
+                            Console.WriteLine("Show board.");
+                            // Show the current player's own board
+                            DisplayMap(xCoordinateMaximum, yCoordinateMaximum, mapCoordinate);
+                            break;
+                        }
+                    case "i":
+                        {
+                            if (setupPhase)
+                            {
+                                // Test message
+                                Console.WriteLine("Show instructions.");
+                                // Show instructions of game only in setup phase
+                                // DisplayInstructions(); 
+                            }
+                            else
+                            {
+                                Console.WriteLine("Instructions not available during game play.");
+                            }
+                            break;
+                        }
+                    case "m":
+                        {
+                            if (!setupPhase)
+                            {
+                                // Test message
+                                Console.WriteLine("Show shot map.");
+                                // Display shot map only in game phase
+                                // DisplayShotMapFunction();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Map not available during setup.");
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            // Try to parse player input into different token parts, separated by empty space.
+                            // If not, then prompt "Incorrect Input".
+                            // The switch statement only checks for invalid input, not ship out of bound or overlap.
+                            // That functionality belongs to the ship placement function.
+                            string[] inputTokens = playerInput.Split(' ');
+                            if (setupPhase)
+                            {
+                                int row;
+                                int col;
+                                if (inputTokens.Length != 3)
+                                {
+                                    Console.WriteLine("Incorrect input.");
+                                    break;
+                                }
+                                bool rowCheck = int.TryParse(inputTokens[0], out row);
+                                bool colCheck = int.TryParse(inputTokens[1], out col);
+                                string dir = inputTokens[2];
+
+                                if (!rowCheck || !colCheck || ((dir != "h") && (dir != "v")))
+                                {
+                                    Console.WriteLine("Incorrect input.");
+                                    break;
+                                }
+
+                                Console.WriteLine($"Place ship at {row}:{col} in {dir} direction.");
+
+                                //Placing player 1 ships into map coordinates
+                                if (playerID == 1)
+                                {
+                                    for (int i = 0; i < player1ShipPlacement.Length; i++)
+                                    {
+                                        for (int j = 0; j < player1ShipPlacement.Length; j++)
+                                        {
+                                            //If the placement of the ships is at the coordinates specified, put the ship there
+                                            if ((player1ShipPlacement[i] == rowCheck) && (player1ShipPlacement[j] == colCheck))
+                                            {
+                                                // Do the code
+                                            }
+                                            else
+                                            {
+                                                // Don't do the code
+                                            }
+                                        }
+                                    }
+                                }
+
+                                //Placing player 2 ships into map coordinates
+                                if (playerID == 2)
+                                {
+                                    for (row = 0; row < player2ShipPlacement.Length; row++)
+                                    {
+                                        for (col = 0; col < player2ShipPlacement.Length; col++)
+                                        {
+                                            
+                                        }
+                                    }
+                                }
+
+                                // Try to place ship in order of the ship array
+                                Console.WriteLine($"Placement of {shipArr[currShipIdx]}");
+                                //if (PlaceShipFunction(ShipArr[currshipIdx], row, col, dir))
+                                //{
+                                Console.WriteLine($"{shipArr[currShipIdx]} successfully placed at {row}:{col}.");
+                                currShipIdx += 1;
+                                if (currShipIdx == shipArr.Length)
+                                {
+                                    // Current player has finished set up
+                                    Console.WriteLine("Current player set up phase finished.");
+                                    if (playerID == 1)
+                                    {
+                                        currShipIdx = 0;
+                                        TurnProgression(ref playerID);
+                                        CleanScreenFunction();
+                                        SetupText(playerID);
+                                    }
+                                    else
+                                    {
+                                        TurnProgression(ref playerID);
+                                        setupPhase = false;
+                                        CleanScreenFunction();
+                                        GameplayText(playerID);
+                                    }
+                                }
+                                break;
+                                //}
+                                // else
+                                // {
+                                //     Console.WriteLine($"Invalid placement.");
+                                //     break;
+                                // }
+
+                            }
+                            else //Players now start shooting at each other
+                            {
+                                int row;
+                                int col;
+                                if (inputTokens.Length != 2)
+                                {
+                                    Console.WriteLine("Incorrect input.");
+                                    break;
+                                }
+                                bool rowCheck = int.TryParse(inputTokens[0], out row);
+                                bool colCheck = int.TryParse(inputTokens[1], out col);
+                                if (!rowCheck || !colCheck)
+                                {
+                                    Console.WriteLine("Incorrect input.");
+                                    break;
+                                }
+                                // Test Message
+                                Console.WriteLine($"Shooting at position {row}:{col}.");
+                                // Pass input to shooting function
+
+                                if (ShootFunction(row, col))
+                                {
+                                    Console.WriteLine("Valid shot.");
+                                    TurnProgression(ref playerID);
+                                    // Clean the screen for next player
+                                    CleanScreenFunction();
+                                    GameplayText(playerID);
+                                    break;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid shot.");
+                                    break;
+                                }
+
+                                // Only progress to the next player after a valid shot was launched
+                            }
+                            break;
+                        }
+                }
+            }
+        }
+
+        static void TurnProgression(ref int playerID)
+        {
+            playerID = (playerID % 2) + 1;
+        }
+
+        static void SetupText(int playerID)
+        {
+            Console.WriteLine(new string('-', Console.WindowWidth));
+            Console.WriteLine($"Player {playerID}, please place your ships. Enter 'x' to exit, 'b' to see the current board layout, or 'i' to see the instructions.");
+            Console.WriteLine(new string('-', Console.WindowWidth));
+        }
+
+        static void GameplayText(int playerID)
+        {
+            Console.WriteLine(new string('-', Console.WindowWidth));
+            Console.WriteLine($"Player {playerID}. it's your turn. Enter, in order, the row and column you would like to target, 'b' to see your ship layout, 'm' to see your shot map, or 'x' to exit, then press <enter>.");
+            Console.WriteLine(new string('-', Console.WindowWidth));
+        }
+
+        static void CleanScreenFunction()
+        {
+            Console.WriteLine(new string('-', Console.WindowWidth));
+            Console.WriteLine("Screen will clean here.");
+            Console.WriteLine(new string('-', Console.WindowWidth));
+
+        }
+
+        public static bool AreAllShipsBlownUp(bool[] shipsBlownUp)
+        {
+            // If the array is empty or null, safety check
+            if (shipsBlownUp == null || shipsBlownUp.Length == 0) return false;
+
+            // Loop through all ship statuses
+            foreach (bool isSunk in shipsBlownUp)
+            {
+                // If any ship is still alive (false), the player hasn't lost yet
+                if (!isSunk)
+                {
+                    return false;
+                }
+            }
+            return true; // All ships are destroyed!
+        }
+
+        /// <summary>
+        /// Displays the winner announcement banner.
+        /// </summary>
+        public static void DisplayVictoryMessage(string winnerId)
+        {
+            Console.WriteLine("\n========================================");
+            Console.WriteLine($"  Congratulations, {winnerId} wins!!!");
+            Console.WriteLine("========================================\n");
+        }
+
+        /// <summary>
+        /// Example of how this logic integrates into the main turn loop.
+        /// </summary>
+        public static bool CheckTurnResult(string[] playerIds, int currentPlayerIndex, bool[] opponentShips)
+        {
+            // Check if the opponent's fleet is completely destroyed after an attack
+            if (AreAllShipsBlownUp(opponentShips))
+            {
+                // Print victory message for the current player
+                DisplayVictoryMessage(playerIds[currentPlayerIndex]);
+                return true; // Game Over
+            }
+            return false; // Game continues
+        }
+
+
+
+        public static bool ShootFunction(int targetRow, int targetCol)
+        {
+            //Right now it only checks for going out of 10x10's range
+            if ((targetRow < xCoordinateMaximum) && (targetCol < yCoordinateMaximum))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static void DisplayMap(int xDimension, int yDimension, int[,] mapBoard)
+        {
+            mapBoard = new int[11, 11];
+            char[] charToTrim = { ' ' };
+
+            Console.Write("  ");
+            for (int i = 1; i < mapBoard.GetLength(0); i++)
+            {
+                Console.Write($"  {i} ");
+            }
+            Console.WriteLine();
+            Console.WriteLine("  +---+---+---+---+---+---+---+---+---+---+");
+            for (int i = 1; i < mapBoard.GetLength(0); i++)
+            {
+                string numbersTrimmed = i.ToString().Trim(' ');
+                string numberTenTrimmed = i.ToString().Trim(' ');
+                if (i == 10) //Specifically used for the number 10 as that has two digits
+                {
+                    Console.Write($"{numberTenTrimmed}");
+                }
+                else
+                {
+                    Console.Write($" {numbersTrimmed}");
+                }
+                for (int j = 0; j < mapBoard.GetLength(1); j++)
+                {
+                    Console.Write("|   ");
+                }
+                Console.WriteLine();
+            }
+            Console.WriteLine("  +---+---+---+---+---+---+---+---+---+---+");
+        }
+
+
+    }
+}
