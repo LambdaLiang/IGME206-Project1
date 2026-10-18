@@ -413,8 +413,8 @@ class Program
     /// </summary>
     /// <param name="rowDim">Gets the rows of the board</param>
     /// <param name="colDim">Gets the columns of the board</param>
-    /// <param name="player1Shots"></param>
-    /// <param name="player2Shots"></param>
+    /// <param name="player1Shots">Gets the shots of player1</param>
+    /// <param name="player2Shots">Gets the shots of player2</param>
     public static void CheckShots(int rowDim, int colDim, ref char[,] player1Shots, ref char[,] player2Shots, char[,] player1Ships, char[,] player2Ships)
     {
         char hit = 'X';
