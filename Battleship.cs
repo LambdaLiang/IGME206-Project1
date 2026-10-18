@@ -64,7 +64,16 @@ class Program
                         // Test message
                         Console.WriteLine("Show board.");
                         // Show the current player's own board
-                        // DisplayMapFunction();
+                        if (playerID == 1) // Player 1
+                        {
+                            Console.WriteLine($"Player {playerID}'s board:");
+                            CurrentBoardLayout(ref player1Ships, rowDim, colDim);
+                        }
+                        else // Player 2
+                        {
+                            Console.WriteLine($"Player {playerID}'s board:");
+                            CurrentBoardLayout(ref player2Ships, rowDim, colDim);
+                        }
                         break;
                     }
                 case "i":
@@ -211,6 +220,18 @@ class Program
                                 if (playerID == 1)
                                 {
                                     player1Shots[row, col] = 'X';
+                                    //Debug
+                                    Console.WriteLine($"{player2Ships[row, col]} placed @ ");
+                                    for (int i = 0; i < rowDim; i++)
+                                    {
+                                        for (int j = 0; j < colDim; j++)
+                                        {
+                                            if (player2Ships[i, j] == player2Ships[i, j])
+                                            {
+                                                Console.WriteLine($"{i}, {j}");
+                                            }
+                                        }
+                                    }
                                     //CheckShots(rowDim, colDim, ref player1Shots, ref player2Shots, player1Ships, player2Ships);
                                 }
                                 else
@@ -281,6 +302,24 @@ class Program
             {
                 board[row, col] = '.';
             }
+        }
+    }
+
+    /// <summary>
+    /// Gets the current board of each player
+    /// </summary>
+    /// <param name="board">Gets the board of each player</param>
+    /// <param name="rowDim">Gets the rows of the map</param>
+    /// <param name="colDim">Gets the columns of the map</param>
+    static void CurrentBoardLayout(ref char[,] board, int rowDim, int colDim)
+    {
+        for (int i = 0; i < colDim; i++)
+        {
+            for (int j = 0; j < rowDim; j++)
+            {
+                Console.Write($"{board[i, j]} ");
+            }
+            Console.WriteLine();
         }
     }
 
@@ -425,14 +464,14 @@ class Program
             {
                 //Gets the player1shots and if they equal the player2's ships locations, output something
                 //TODO: Figure out why the shots are not being placed in correctly when user gives input
-                if (player1Shots[i, j] != player2Ships[i, j])
+                if (player1Shots[i, j] == player2Ships[i, j])
                 {
                     Console.WriteLine("You hit the enemy ship!");
                     player2Ships[i, j] = 'H';
                     break;
                 }
 
-                if (player2Shots[i, j] != player1Ships[i, j])
+                if (player2Shots[i, j] == player1Ships[i, j])
                 {
                     Console.WriteLine("You hit the enemy ship!");
                     player1Ships[i, j] = 'H';
