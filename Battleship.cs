@@ -220,23 +220,12 @@ class Program
                                 if (playerID == 1)
                                 {
                                     player1Shots[row, col] = 'X';
-                                    //Debug
-                                    Console.WriteLine($"{player2Ships[row, col]} placed @ ");
-                                    for (int i = 0; i < rowDim; i++)
-                                    {
-                                        for (int j = 0; j < colDim; j++)
-                                        {
-                                            if (player2Ships[i, j] == player2Ships[i, j])
-                                            {
-                                                Console.WriteLine($"{i}, {j}");
-                                            }
-                                        }
-                                    }
-                                    //CheckShots(rowDim, colDim, ref player1Shots, ref player2Shots, player1Ships, player2Ships);
+                                    CheckShots(row, col, ref player1Shots, ref player2Ships);
                                 }
                                 else
                                 {
                                     player2Shots[row, col] = 'X';
+                                    CheckShots(row, col, ref player2Shots, ref player1Ships);
                                 }
                             }
 
@@ -452,30 +441,26 @@ class Program
     /// </summary>
     /// <param name="rowDim">Gets the rows of the board</param>
     /// <param name="colDim">Gets the columns of the board</param>
-    /// <param name="player1Shots">Gets the shots of player1</param>
-    /// <param name="player2Shots">Gets the shots of player2</param>
-    public static void CheckShots(int rowDim, int colDim, ref char[,] player1Shots, ref char[,] player2Shots, char[,] player1Ships, char[,] player2Ships)
+    /// <param name="currentPlayerShots">Gets the shots of the current player</param>
+    /// <param name="currentOpponentShips">Gets the shots of the opponent player</param>
+    public static void CheckShots(int rowDim, int colDim, ref char[,] currentPlayerShots, ref char[,] currentOpponentShips)
     {
-        char hit = 'X';
         // Tells the player whether or not they made direct contact when shooting at a ship
         for (int i = 0; i < rowDim; i++)
         {
             for (int j = 0; j < colDim; j++)
             {
-                //Gets the player1shots and if they equal the player2's ships locations, output something
-                //TODO: Figure out why the shots are not being placed in correctly when user gives input
-                if (player1Shots[i, j] == player2Ships[i, j])
+                // Gets the player1shots and if they equal the player2's ships locations, output something
+                // If there is an X at the current players board
+                if (currentPlayerShots[i, j] == 'X')
                 {
-                    Console.WriteLine("You hit the enemy ship!");
-                    player2Ships[i, j] = 'H';
-                    break;
-                }
-
-                if (player2Shots[i, j] == player1Ships[i, j])
-                {
-                    Console.WriteLine("You hit the enemy ship!");
-                    player1Ships[i, j] = 'H';
-                    break;
+                    // If there is something in the space
+                    if (currentOpponentShips[i, j] != '\0')
+                    {
+                        // Debug text
+                        Console.WriteLine("You hit the enemy ship!");
+                        break;
+                    }
                 }
             }
         }
