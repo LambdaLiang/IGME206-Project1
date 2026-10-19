@@ -220,27 +220,20 @@ class Program
                                 if (playerID == 1)
                                 {
                                     player1Shots[row, col] = 'X';
-                                    CheckShots(row, col, ref player1Shots, ref player2Ships);
+                                    CheckShots(rowDim, colDim, ref player1Shots, ref player2Ships);
                                 }
                                 else
                                 {
                                     player2Shots[row, col] = 'X';
-                                    CheckShots(row, col, ref player2Shots, ref player1Ships);
+                                    CheckShots(rowDim, colDim, ref player2Shots, ref player1Ships);
                                 }
                             }
 
-                            // If the player hits the other's player's ship, output a message
-                            
-                            
+                            // If the player sinks another's ship
+
 
                             // Win();
                             TurnProgression(ref playerID);
-
-                            //else if (player2Shots[row, col] == player1Ships[row, col])
-                            //{
-                            //    Console.WriteLine("You hit something!");
-                            //}
-
 
                             // Clean the screen for next player
                             Console.Clear();
@@ -292,6 +285,12 @@ class Program
                 board[row, col] = '.';
             }
         }
+    }
+
+
+    public static void ShipDefeated()
+    {
+
     }
 
     /// <summary>
@@ -465,6 +464,8 @@ class Program
             }
         }
     }
+
+
 }
 
 // When is the first time I can determine win?
