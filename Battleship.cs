@@ -103,12 +103,12 @@ class Program
                             if (playerID == 1)
                             {
                                 PrintMap(player1Shots, rowDim, colDim);
-                                
+
                             }
                             else
                             {
                                 PrintMap(player2Shots, rowDim, colDim);
-                               //DisplayShotMap(player2Shots, rowDim, colDim, ref player2Ships, ref player1Ships);
+                                //DisplayShotMap(player2Shots, rowDim, colDim, ref player2Ships, ref player1Ships);
                             }
                         }
                         else
@@ -202,7 +202,7 @@ class Program
 
                             Console.WriteLine($"Shooting at position {row}:{col}.");
 
-                            
+
 
                             //if (player2Shots[row, col] == )
                             //{
@@ -220,38 +220,29 @@ class Program
                                 if (playerID == 1)
                                 {
                                     player1Shots[row, col] = 'X';
-                                    //Debug
-                                    Console.WriteLine($"{player2Ships[row, col]} placed @ ");
-                                    for (int i = 0; i < rowDim; i++)
-                                    {
-                                        for (int j = 0; j < colDim; j++)
-                                        {
-                                            if (player2Ships[i, j] == player2Ships[i, j])
-                                            {
-                                                Console.WriteLine($"{i}, {j}");
-                                            }
-                                        }
-                                    }
-                                    //CheckShots(rowDim, colDim, ref player1Shots, ref player2Shots, player1Ships, player2Ships);
+                                    CheckShots(rowDim, colDim, ref player1Shots, ref player2Ships);
                                 }
                                 else
                                 {
                                     player2Shots[row, col] = 'X';
+                                    CheckShots(rowDim, colDim, ref player2Shots, ref player1Ships);
                                 }
                             }
 
-                            // If the player hits the other's player's ship, output a message
-                            
-                            
+                            // If the player sinks another's ship
+                            if (playerID == 1)
+                            {
+                                //ShipDefeated(rowDim, colDim, ref shipLength, player2Ships);
+                                Console.WriteLine($"You sunk a ship!");
+                            }
+                            else
+                            {
+                                //ShipDefeated(rowDim, colDim, ref shipLength, player1Ships);
+                                Console.WriteLine($"You sunk a ship!");
+                            }
 
                             // Win();
                             TurnProgression(ref playerID);
-
-                            //else if (player2Shots[row, col] == player1Ships[row, col])
-                            //{
-                            //    Console.WriteLine("You hit something!");
-                            //}
-
 
                             // Clean the screen for next player
                             Console.Clear();
@@ -305,6 +296,23 @@ class Program
         }
     }
 
+
+    public static bool ShipDefeated(int rowDim, int colDim, ref int[] lengthOfShip, char[,] opponentShips)
+    {
+        for (int row = 0; row < rowDim; row++)
+        {
+            for (int col = 0; col < colDim; col++)
+            {
+                //TODO: Figure out how to make the ships
+                if ((opponentShips[row, col] == 'X') && (lengthOfShip.Length - 1 == 'X'))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     /// <summary>
     /// Gets the current board of each player
     /// </summary>
@@ -348,13 +356,13 @@ class Program
             Console.WriteLine("Valid shot");
             return true;
         }
-        
+
     }
 
     /// <summary>
     /// Allows both players to place their ships on the map
     /// </summary>
-    /// <param name="shipBoard"></param>
+    /// <param name="shipBoard">Gets a reference of the ship board</param>
     /// <param name="row">Gets the row input from the player</param>
     /// <param name="col">Gets the column input from the player</param>
     /// <param name="direction">Which direction the ship is place in, either h or v</param>
@@ -452,34 +460,32 @@ class Program
     /// </summary>
     /// <param name="rowDim">Gets the rows of the board</param>
     /// <param name="colDim">Gets the columns of the board</param>
-    /// <param name="player1Shots">Gets the shots of player1</param>
-    /// <param name="player2Shots">Gets the shots of player2</param>
-    public static void CheckShots(int rowDim, int colDim, ref char[,] player1Shots, ref char[,] player2Shots, char[,] player1Ships, char[,] player2Ships)
+    /// <param name="currentPlayerShots">Gets the shots of the current player</param>
+    /// <param name="currentOpponentShips">Gets the shots of the opponent player</param>
+    public static void CheckShots(int rowDim, int colDim, ref char[,] currentPlayerShots, ref char[,] currentOpponentShips)
     {
-        char hit = 'X';
         // Tells the player whether or not they made direct contact when shooting at a ship
         for (int i = 0; i < rowDim; i++)
         {
             for (int j = 0; j < colDim; j++)
             {
-                //Gets the player1shots and if they equal the player2's ships locations, output something
-                //TODO: Figure out why the shots are not being placed in correctly when user gives input
-                if (player1Shots[i, j] == player2Ships[i, j])
+                // Gets the player1shots and if they equal the player2's ships locations, output something
+                // If there is an X at the current players board
+                if (currentPlayerShots[i, j] == 'X')
                 {
-                    Console.WriteLine("You hit the enemy ship!");
-                    player2Ships[i, j] = 'H';
-                    break;
-                }
-
-                if (player2Shots[i, j] == player1Ships[i, j])
-                {
-                    Console.WriteLine("You hit the enemy ship!");
-                    player1Ships[i, j] = 'H';
-                    break;
+                    // If there is something in the space, write out console line
+                    if (currentOpponentShips[i, j] != '\0')
+                    {
+                        // Debug text
+                        Console.WriteLine("You hit the enemy ship!");
+                        return;
+                    }
                 }
             }
         }
     }
+
+
 }
 
 // When is the first time I can determine win?
