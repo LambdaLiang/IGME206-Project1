@@ -312,7 +312,7 @@ class Program
     /// <param name="board">Gets the board of each player</param>
     /// <param name="rowDim">Gets the rows of the map</param>
     /// <param name="colDim">Gets the columns of the map</param>
-    public static void CurrentBoardLayout(ref char[,] board, int rowDim, int colDim)
+    static void CurrentBoardLayout(ref char[,] board, int rowDim, int colDim)
     {
         for (int i = 0; i < colDim; i++)
         {
@@ -324,7 +324,7 @@ class Program
         }
     }
 
-    public static void inputIndexConversion(ref int coord)
+    static void inputIndexConversion(ref int coord)
     {
         // This function is used to turn the 1-based user input into 0-based array index
         // Because the user sees 1-10, but the array uses 0-9
