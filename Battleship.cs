@@ -67,12 +67,12 @@ class Program
                         if (playerID == 1) // Player 1
                         {
                             Console.WriteLine($"Player {playerID}'s board:");
-                            CurrentBoardLayout(ref player1Ships, rowDim, colDim);
+                            //CurrentBoardLayout(ref player1Ships, rowDim, colDim);
                         }
                         else // Player 2
                         {
                             Console.WriteLine($"Player {playerID}'s board:");
-                            CurrentBoardLayout(ref player2Ships, rowDim, colDim);
+                            //CurrentBoardLayout(ref player2Ships, rowDim, colDim);
                         }
                         break;
                     }
@@ -203,12 +203,6 @@ class Program
                             Console.WriteLine($"Shooting at position {row}:{col}.");
 
 
-
-                            //if (player2Shots[row, col] == )
-                            //{
-                            //    Console.WriteLine("You hit something!");
-                            //}
-
                             // Convert user input into array index
                             inputIndexConversion(ref row);
                             inputIndexConversion(ref col);
@@ -296,7 +290,6 @@ class Program
         }
     }
 
-
     public static bool ShipDefeated(int rowDim, int colDim, ref int[] lengthOfShip, char[,] opponentShips)
     {
         for (int row = 0; row < rowDim; row++)
@@ -319,7 +312,7 @@ class Program
     /// <param name="board">Gets the board of each player</param>
     /// <param name="rowDim">Gets the rows of the map</param>
     /// <param name="colDim">Gets the columns of the map</param>
-    static void CurrentBoardLayout(ref char[,] board, int rowDim, int colDim)
+    public static void CurrentBoardLayout(ref char[,] board, int rowDim, int colDim)
     {
         for (int i = 0; i < colDim; i++)
         {
@@ -331,7 +324,7 @@ class Program
         }
     }
 
-    static void inputIndexConversion(ref int coord)
+    public static void inputIndexConversion(ref int coord)
     {
         // This function is used to turn the 1-based user input into 0-based array index
         // Because the user sees 1-10, but the array uses 0-9
@@ -473,7 +466,7 @@ class Program
                 // If there is an X at the current players board
                 if (currentPlayerShots[i, j] == 'X')
                 {
-                    // If there is something in the space, write out console line
+                    // If there is something in the space
                     if (currentOpponentShips[i, j] != '\0')
                     {
                         // Debug text
