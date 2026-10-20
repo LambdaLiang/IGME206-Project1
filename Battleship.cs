@@ -1,6 +1,11 @@
-﻿
+
 class Program
 {
+    const int V = 0;
+    const int H = 1;
+    const int BoatSunk = 0;
+    const int BoatFloating = 1;
+
     static void Main()
     {
         // variables to use
@@ -10,6 +15,8 @@ class Program
         char[] shipIcon = ['C', 'B', 'D', 'S', 'P'];
         int[] shipLength = [5, 4, 3, 3, 2];
         int currShipIdx = 0;
+        int startingRow = 0;
+        int startingCol = 0;
 
         // Map dimensions
         int rowDim = 10;
@@ -21,9 +28,21 @@ class Program
         char[,] player1Shots = new char[rowDim, colDim];
         char[,] player2Shots = new char[rowDim, colDim];
 
+        // Data for both boats
+        // Making a 2D to represent the boats that a player has
+        // and the data that the player has about that boat.
+        // Each row represents another boat,
+        // The following indices represents the data inside each boat
+        // Index 0 represents starting row of the boat
+        // Index 1 represents starting col of the boat
+        // Index 2 represents the length
+        // Index 3 represents whether the ship is placed horizontally or vertically
+        // Index 4 represents whether or not the ship is sunk
+        int[,] boatData1 = new int[5,5];
+        int[,] boatData2 = new int[5,5];
 
-        // Entrance Screen
-        Entrance();
+        // Enterance Screen
+        Enterance();
 
         // Setup Phase
         setupPhase = true;
@@ -34,7 +53,6 @@ class Program
         InitializeBoard(rowDim, colDim, ref player2Ships);
         InitializeBoard(rowDim, colDim, ref player1Shots);
         InitializeBoard(rowDim, colDim, ref player2Shots);
-
 
         // Main gameplay loop
         while (true)
@@ -67,12 +85,12 @@ class Program
                         if (playerID == 1) // Player 1
                         {
                             Console.WriteLine($"Player {playerID}'s board:");
-                            //CurrentBoardLayout(ref player1Ships, rowDim, colDim);
+                            CurrentBoardLayout(ref player1Ships, rowDim, colDim);
                         }
                         else // Player 2
                         {
                             Console.WriteLine($"Player {playerID}'s board:");
-                            //CurrentBoardLayout(ref player2Ships, rowDim, colDim);
+                            CurrentBoardLayout(ref player2Ships, rowDim, colDim);
                         }
                         break;
                     }
@@ -102,13 +120,11 @@ class Program
                             // Display shot map only in game phase
                             if (playerID == 1)
                             {
-                                PrintMap(player1Shots, rowDim, colDim);
-
+                                PrintShotMap(player1Shots, rowDim, colDim);
                             }
                             else
                             {
-                                PrintMap(player2Shots, rowDim, colDim);
-                                //DisplayShotMap(player2Shots, rowDim, colDim, ref player2Ships, ref player1Ships);
+                                PrintShotMap(player2Shots, rowDim, colDim);
                             }
                         }
                         else
@@ -136,6 +152,41 @@ class Program
                             bool rowCheck = int.TryParse(inputTokens[0], out row);
                             bool colCheck = int.TryParse(inputTokens[1], out col);
                             string dir = inputTokens[2];
+
+                            if (playerID == 1)
+                            {
+                                // Placing all of the data into boatData for Player 1
+                                boatData1[currShipIdx, 0] = row;
+                                boatData1[currShipIdx, 1] = col;
+                                boatData1[currShipIdx, 2] = shipLength[currShipIdx];
+                                if (dir == "h")
+                                {
+                                    // The boat is horizontal
+                                    boatData1[currShipIdx, 3] = H;
+                                }
+                                else if (dir == "v")
+                                {
+                                    // The boat is NOT horizontal, it's vertical
+                                    boatData1[currShipIdx, 3] = V;
+                                }
+                                boatData1[currShipIdx, 4] = BoatFloating;
+                            }
+                            else
+                            { // Placing all of the data into boatData for Player 2
+                                boatData2[currShipIdx, 0] = row;
+                                boatData2[currShipIdx, 1] = col;
+                                boatData2[currShipIdx, 2] = shipLength[currShipIdx];
+                                
+                                if (dir == "h")
+                                {
+                                    boatData2[currShipIdx, 3] = H;
+                                }
+                                else if (dir == "v")
+                                {
+                                    boatData2[currShipIdx, 3] = V;
+                                }
+                                boatData2[currShipIdx, 4] = BoatFloating;
+                            }
 
                             if (!rowCheck || !colCheck || ((dir != "h") && (dir != "v")))
                             {
@@ -202,7 +253,6 @@ class Program
 
                             Console.WriteLine($"Shooting at position {row}:{col}.");
 
-
                             // Convert user input into array index
                             inputIndexConversion(ref row);
                             inputIndexConversion(ref col);
@@ -224,12 +274,12 @@ class Program
                             }
 
                             // If the player sinks another's ship
-                            if (playerID == 1)
+                            if (playerID == 1) // Player 1 
                             {
-                                //ShipDefeated(rowDim, colDim, ref shipLength, player2Ships);
+                                ShipDefeated(rowDim, colDim, ref shipLength, ref boatData1, player1Shots, player2Ships);
                                 Console.WriteLine($"You sunk a ship!");
                             }
-                            else
+                            else // Player 2
                             {
                                 //ShipDefeated(rowDim, colDim, ref shipLength, player1Ships);
                                 Console.WriteLine($"You sunk a ship!");
@@ -261,11 +311,14 @@ class Program
     static void Enterance()
     {
         // Greeting user
+        Console.BackgroundColor = ConsoleColor.Gray;
+        Console.ForegroundColor = ConsoleColor.Black;
         Console.WriteLine("Welcome to Battleship!\n");
+        Console.ResetColor();
         Console.WriteLine("Command your fleets in this classic two-player strategy game of naval combat!\n");
         Console.WriteLine("Each player commands a fleet of 5 ships placed on a 10x10 grid. " +
         "Your goal is to locate and sink all of your opponent's ships before they sink yours!\n");
-        
+
         // Fleet
         Console.WriteLine("Your Fleet: \n" +
         "1. Aircraft Carrier (Length: 5) (Icon: C)\n" +
@@ -273,25 +326,26 @@ class Program
         "3. Destroyer (Length: 3) (Icon: D)\n" +
         "4. Submarine (Length: 2) (Icon: S)\n" +
         "5. Patrol (Length: 2) (Icon: P)\n\n");
-        
+
         // Directions
-        Console.WriteLine("1. Setup Phase: " + 
-        "Both players will take turns placing their 5 ships horizontally “h” or vertically “v” on their 10x10 grid. " + 
-        "Ships must fit entirely on the board and cannot overlap or be placed diagonally.\n" + 
+        Console.WriteLine("1. Setup Phase: " +
+        "Both players will take turns placing their 5 ships horizontally “h” or vertically “v” on a 10x10 grid.\n " +
+        "\tShips must fit entirely on the board and cannot overlap or be placed diagonally.\n" +
         "2. Game Phase: " +
-        "Players take turns firing shots by entering grid coordinates row and column.\n" + 
-        "3. Tracking Progress: " + 
-        "On your turn, you can view your own board or your shot map to see your hits and misses against the enemy.\n" +
+        "Players take turns firing shots by entering grid coordinates row and column.\n" +
+        "3. Tracking Progress: " +
+        "On your turn, you can view your own board and shot map to see your hits and misses against the opponent.\n" +
         "4. Winning: " +
         "The first player to successfully sink all 5 enemy ships wins the battle!\n\n");
-        
+
         // Allowing the user to press a key to begin gameplay
         Console.WriteLine("Press any key to begin playing.");
-        
+        Console.WriteLine();
         ConsoleKeyInfo userInput = Console.ReadKey();
-        
+
+        Console.Clear();
     }
-    
+
     static void TurnProgression(ref int playerID)
     {
         // Possible TODO:
@@ -325,16 +379,24 @@ class Program
         }
     }
 
-    public static bool ShipDefeated(int rowDim, int colDim, ref int[] lengthOfShip, char[,] opponentShips)
+    public static bool ShipDefeated(int rowDim, int colDim, ref int[] shipLength, ref int[,] boatData, char[,] currentPlayerShootingShips, char[,] opponentShips)
     {
+        // Looping through the grid
         for (int row = 0; row < rowDim; row++)
         {
             for (int col = 0; col < colDim; col++)
             {
-                //TODO: Figure out how to make the ships
-                if ((opponentShips[row, col] == 'X') && (lengthOfShip.Length - 1 == 'X'))
+                // If there is an empty in the opponent's ships and there is an X on the current player's map
+                if ((opponentShips[row, col] != '\0') && (currentPlayerShootingShips[row, col] == 'X'))
                 {
-                    return true;
+                    //If the boat is still floating
+                    if (opponentShips[row, col] == BoatFloating)
+                    {
+                        if (boatData[row, col] == opponentShips[row, col])
+                        {
+                            Console.Write("Hello");
+                        }
+                    }
                 }
             }
         }
@@ -367,7 +429,7 @@ class Program
         coord -= 1;
     }
     /// <summary>
-    /// This allows the user to take the shots
+    /// This tells the user if there shot hit inside of the grid
     /// </summary>
     /// <param name="row">Gets the user's y value for input</param>
     /// <param name="col">Gets the user's x value for input</param>
@@ -466,12 +528,17 @@ class Program
                 shipBoard[row + i, col] = shipIcon;
             }
         }
-        PrintMap(shipBoard, rowDim, colDim);
+        PrintShotMap(shipBoard, rowDim, colDim);
         return true;
     }
 
-    // Debug function
-    static void PrintMap(char[,] map, int rowDim, int colDim)
+    /// <summary>
+    /// Prints out the shot map
+    /// </summary>
+    /// <param name="map">Gets the map of each player's shots</param>
+    /// <param name="rowDim">Gets the amount of rows</param>
+    /// <param name="colDim">Gets the amount of columns</param>
+    static void PrintShotMap(char[,] map, int rowDim, int colDim)
     {
         for (int i = 0; i < rowDim; i++)
         {
@@ -498,22 +565,25 @@ class Program
             for (int j = 0; j < colDim; j++)
             {
                 // Gets the player1shots and if they equal the player2's ships locations, output something
-                // If there is an X at the current players board
+                // If there is an X at the current players board and if something is there
                 if (currentPlayerShots[i, j] == 'X')
                 {
-                    // If there is something in the space
-                    if (currentOpponentShips[i, j] != '\0')
+                    if (currentOpponentShips[i, j] != '.')
                     {
-                        // Debug text
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("You hit the enemy ship!");
+                        ConsoleKeyInfo key = Console.ReadKey();
+                        Console.ResetColor();
                         return;
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
         }
     }
-
-
 }
 
 // When is the first time I can determine win?
