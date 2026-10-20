@@ -23,7 +23,7 @@ class Program
 
 
         // Entrance Screen
-        // Entrance();
+        Entrance();
 
         // Setup Phase
         setupPhase = true;
@@ -257,6 +257,41 @@ class Program
         }
     }
 
+    // Welcoming the user to the game
+    static void Enterance()
+    {
+        // Greeting user
+        Console.WriteLine("Welcome to Battleship!\n");
+        Console.WriteLine("Command your fleets in this classic two-player strategy game of naval combat!\n");
+        Console.WriteLine("Each player commands a fleet of 5 ships placed on a 10x10 grid. " +
+        "Your goal is to locate and sink all of your opponent's ships before they sink yours!\n");
+        
+        // Fleet
+        Console.WriteLine("Your Fleet: \n" +
+        "1. Aircraft Carrier (Length: 5) (Icon: C)\n" +
+        "2. Battleship (Length: 4) (Icon: B)\n" +
+        "3. Destroyer (Length: 3) (Icon: D)\n" +
+        "4. Submarine (Length: 2) (Icon: S)\n" +
+        "5. Patrol (Length: 2) (Icon: P)\n\n");
+        
+        // Directions
+        Console.WriteLine("1. Setup Phase: " + 
+        "Both players will take turns placing their 5 ships horizontally “h” or vertically “v” on their 10x10 grid. " + 
+        "Ships must fit entirely on the board and cannot overlap or be placed diagonally.\n" + 
+        "2. Game Phase: " +
+        "Players take turns firing shots by entering grid coordinates row and column.\n" + 
+        "3. Tracking Progress: " + 
+        "On your turn, you can view your own board or your shot map to see your hits and misses against the enemy.\n" +
+        "4. Winning: " +
+        "The first player to successfully sink all 5 enemy ships wins the battle!\n\n");
+        
+        // Allowing the user to press a key to begin gameplay
+        Console.WriteLine("Press any key to begin playing.");
+        
+        ConsoleKeyInfo userInput = Console.ReadKey();
+        
+    }
+    
     static void TurnProgression(ref int playerID)
     {
         // Possible TODO:
