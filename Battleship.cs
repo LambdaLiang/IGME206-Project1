@@ -85,12 +85,12 @@ class Program
                         if (playerID == 1) // Player 1
                         {
                             Console.WriteLine($"Player {playerID}'s board:");
-                            CurrentBoardLayout(ref player1Ships, rowDim, colDim);
+                            //CurrentBoardLayout(ref player1Ships, rowDim, colDim);
                         }
                         else // Player 2
                         {
                             Console.WriteLine($"Player {playerID}'s board:");
-                            CurrentBoardLayout(ref player2Ships, rowDim, colDim);
+                            //CurrentBoardLayout(ref player2Ships, rowDim, colDim);
                         }
                         break;
                     }
@@ -345,7 +345,7 @@ class Program
 
         Console.Clear();
     }
-
+    
     static void TurnProgression(ref int playerID)
     {
         // Possible TODO:
