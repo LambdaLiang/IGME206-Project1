@@ -1,4 +1,4 @@
-
+﻿
 class Program
 {
     const int V = 0;
@@ -38,8 +38,8 @@ class Program
         // Index 2 represents the length
         // Index 3 represents whether the ship is placed horizontally or vertically
         // Index 4 represents whether or not the ship is sunk
-        int[,] boatData1 = new int[5,5];
-        int[,] boatData2 = new int[5,5];
+        int[,] boatData1 = new int[5, 5];
+        int[,] boatData2 = new int[5, 5];
 
         // Enterance Screen
         Enterance();
@@ -96,18 +96,10 @@ class Program
                     }
                 case "i":
                     {
-                        if (setupPhase)
-                        {
-                            // Test message
-                            Console.WriteLine("Show instructions.");
-                            // Show instructions of game only in setup phase
-                            // DisplayInstructions(); 
-                        }
-                        else
-                        {
-                            // can show instruction at any time
-                            Console.WriteLine("Instructions not available during game play.");
-                        }
+                        // Test message
+                        Console.WriteLine("Show instructions.");
+                        // Show instructions of game only in setup phase
+                        // DisplayInstructions(); 
                         break;
                     }
                 case "m":
@@ -176,7 +168,7 @@ class Program
                                 boatData2[currShipIdx, 0] = row;
                                 boatData2[currShipIdx, 1] = col;
                                 boatData2[currShipIdx, 2] = shipLength[currShipIdx];
-                                
+
                                 if (dir == "h")
                                 {
                                     boatData2[currShipIdx, 3] = H;
@@ -215,14 +207,16 @@ class Program
                                     {
                                         currShipIdx = 0;
                                         TurnProgression(ref playerID);
-                                        Console.Clear();
+                                        // TODO: temporary disable clear
+                                        // Console.Clear();
                                         SetupText(playerID);
                                     }
                                     else
                                     {
                                         TurnProgression(ref playerID);
                                         setupPhase = false;
-                                        Console.Clear();
+                                        // TODO: temporary disable clear
+                                        // Console.Clear();
                                         GameplayText(playerID);
                                     }
                                 }
@@ -257,51 +251,41 @@ class Program
                             inputIndexConversion(ref row);
                             inputIndexConversion(ref col);
 
-                            // Places an X at the position the player inputted for each player
-                            // Since it's only 1v1 game, this makes sense
-                            if (ShootFunction(row, col))
+                            // Determine whose map we are calling
+                            // If it's player 1's turn, use player 1's shot map
+                            // vice versa
+                            char[,] currentPlayerShotPtr = playerID == 1 ? player1Shots : player2Shots;
+                            // Determine which ship map we are comparing
+                            // If it's player 1's turn, use ***player 2*** ship map
+                            char[,] opponentShipMapPtr = playerID == 1 ? player2Ships : player1Ships;
+                            if (ShootFunction(ref currentPlayerShotPtr, ref opponentShipMapPtr, row, col, rowDim, colDim))
                             {
-                                if (playerID == 1)
-                                {
-                                    player1Shots[row, col] = 'X';
-                                    CheckShots(rowDim, colDim, ref player1Shots, ref player2Ships);
-                                }
-                                else
-                                {
-                                    player2Shots[row, col] = 'X';
-                                    CheckShots(rowDim, colDim, ref player2Shots, ref player1Ships);
-                                }
+                                CurrentBoardLayout(ref currentPlayerShotPtr, rowDim, colDim);
+                                TurnProgression(ref playerID);
+                                // TODO: temporary disable clear
+                                // Console.Clear();
+                                GameplayText(playerID);
+                                Console.WriteLine("This is where your opponent shoot last turn.");
+                                // You have been HIT
+                                // Determine Ship Sunk
+                                CurrentBoardLayout(ref currentPlayerShotPtr, rowDim, colDim);
                             }
-
-                            // If the player sinks another's ship
-                            if (playerID == 1) // Player 1 
-                            {
-                                ShipDefeated(rowDim, colDim, ref shipLength, ref boatData1, player1Shots, player2Ships);
-                                Console.WriteLine($"You sunk a ship!");
-                            }
-                            else // Player 2
-                            {
-                                //ShipDefeated(rowDim, colDim, ref shipLength, player1Ships);
-                                Console.WriteLine($"You sunk a ship!");
-                            }
-
-                            // Win();
-                            TurnProgression(ref playerID);
-
-                            // Clean the screen for next player
-                            Console.Clear();
-                            GameplayText(playerID);
-                            break;
-                            //}
-                            // else
+                            // // If the player sinks another's ship
+                            // if (playerID == 1) // Player 1 
                             // {
-                            //     Console.WriteLine("Invalid shot.");
-                            //     break;
+                            //     ShipDefeated(rowDim, colDim, ref shipLength, ref boatData1, player1Shots, player2Ships);
+                            //     Console.WriteLine($"You sunk a ship!");
+                            // }
+                            // else // Player 2
+                            // {
+                            //     //ShipDefeated(rowDim, colDim, ref shipLength, player1Ships);
+                            //     Console.WriteLine($"You sunk a ship!");
                             // }
 
-                            // Only progress to the next player after a valid shot was launched
+                            // Win();
+
+                            break;
                         }
-                        break;
                     }
             }
         }
@@ -433,19 +417,38 @@ class Program
     /// </summary>
     /// <param name="row">Gets the user's y value for input</param>
     /// <param name="col">Gets the user's x value for input</param>
-    public static bool ShootFunction(int row, int col)
+    public static bool ShootFunction(ref char[,] currentPlayerShotMap, ref char[,] opponentShipMap, int row, int col, int rowDim, int colDim)
     {
-        //Checking
-        if (row > 10 || col > 10)
+        // Use 'X' to mark actual hit onto ship
+        // Use 'O' to mark missed hits
+        // Check out of bound situations
+        // Since the coordinates are already converted by InputIndexConversion, it needs to be between 0 and 9
+        if (row < 0 || row >= rowDim || col < 0 || col >= colDim)
         {
             Console.WriteLine("Invalid shot");
             return false;
         }
+        else if (currentPlayerShotMap[row, col] == 'X' || currentPlayerShotMap[row, col] == 'O')
+        {
+            Console.WriteLine("You already fired at this position!");
+            return false;
+        }
         else
         {
-            Console.WriteLine("Valid shot");
-            return true;
+            // Reaching this step, we are actually having valid hits
+            if (opponentShipMap[row, col] == '.')
+            {
+                // The shot missed target
+                Console.WriteLine("MISS");
+                currentPlayerShotMap[row, col] = 'O';
+            }
+            else
+            {
+                Console.WriteLine("HIT");
+                currentPlayerShotMap[row, col] = 'X';
+            }
         }
+        return true;
 
     }
 
